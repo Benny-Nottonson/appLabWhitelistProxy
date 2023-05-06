@@ -1,0 +1,13 @@
+{
+  debug
+  admin off
+}
+
+http://${RENDER_EXTERNAL_HOSTNAME},
+http://mydomain.com {
+  reverse_proxy 0.0.0.0:5555
+  log
+  basicauth {
+    {$STUDIO_USERNAME} {$STUDIO_PASSWORD_HASH}
+  }
+}
