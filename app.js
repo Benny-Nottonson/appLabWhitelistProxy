@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 443;
+const PORT = process.env.PORT || 3000;
 
 const routeHelloWorld = require('./routes/hello-world');
 const routeProxy = require('./routes/proxy');
@@ -23,6 +23,10 @@ Object.keys(networkInterfaces).forEach(function (interfaceName) {
 
 var server = app.listen(PORT, ip, function () {
   console.log("Server listening at http://%s:%s", ip, PORT);
+});
+
+server.listen(3000, ip, function () {
+  console.log("Server listening at http://%s:%s", ip, 3000);
 });
 
 const html = `
