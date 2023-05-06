@@ -1,11 +1,30 @@
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
+
+const routeHelloWorld = require('./routes/hello-world');
+const routeProxy = require('./routes/proxy');
+
+app.use('/hello-world', routeHelloWorld);
+app.use('/proxy', routeProxy);
 
 app.get("/", (req, res) => res.type('html').send(html));
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+const os = require('os');
+const networkInterfaces = os.networkInterfaces();
+let ip = 'localhost';
+Object.keys(networkInterfaces).forEach(function (interfaceName) {
+  networkInterfaces[interfaceName].forEach(function (interfaceEntry) {
+    if (interfaceEntry.family === 'IPv4' && !interfaceEntry.internal) {
+      ip = interfaceEntry.address;
+    }
+  });
+});
 
+var server = app.listen(PORT, ip, function () {
+  var port = server.address().port;
+  console.log("Server listening at http://%s:%s", ip, port);
+});
 
 const html = `
 <!DOCTYPE html>
