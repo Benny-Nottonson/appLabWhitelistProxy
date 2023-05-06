@@ -21,12 +21,16 @@ Object.keys(networkInterfaces).forEach(function (interfaceName) {
   });
 });
 
-var server = app.listen(PORT, ip, function () {
-  console.log("Server listening at http://%s:%s", ip, PORT);
+const httpProxy = require('http-proxy-middleware');
+const proxy = httpProxy.createProxyMiddleware({
+    target: 'https://applabwhitelistproxy.onrender.com',
+    changeOrigin: true,
+    secure: true
 });
+app.use('/', proxy);
 
-server.listen(3000, ip, function () {
-  console.log("Server listening at http://%s:%s", ip, 3000);
+app.listen(PORT, ip, function () {
+  console.log("Server listening at http://%s:%s", ip, PORT);
 });
 
 const html = `
