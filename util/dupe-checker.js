@@ -1,24 +1,21 @@
-/*
-    This object is used to check for duplicate requests. I think App Lab issues duplicate requests
-    after 3 seconds if an image has not yet been recieved.
-*/
+class DupeChecker {
+  constructor() {
+    this.duplicates = new Set();
+    this.timeout = 10000;
+  }
 
-const DupeChecker = function () {
-    this.duplicates = {};
-};
-
-DupeChecker.prototype.TIMEOUT = 10;
-
-DupeChecker.prototype.check = function (req) {
+  check(req) {
     const key = req.path;
-    if (this.duplicates[key]) {
-        return false;
+    if (this.duplicates.has(key)) {
+      return false;
     } else {
-        this.duplicates[key] = setTimeout(() => {
-            delete this.duplicates[key];
-        }, this.TIMEOUT * 1000);
-        return true;
+      this.duplicates.add(key);
+      setTimeout(() => {
+        this.duplicates.delete(key);
+      }, this.timeout);
+      return true;
     }
-};
+  }
+}
 
 module.exports = DupeChecker;
