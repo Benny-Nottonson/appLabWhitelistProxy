@@ -62,6 +62,13 @@ module.exports = {
         }
       }
     }
+    if (bytes.length > 0) {
+      const len = 3 - bytes.length;
+      for (let i = 0; i < len; i++) {
+        bytes.push(0);
+      }
+      buffArray.set(bytes, arrayIndex);
+    }
   },
   uint32ToUint8Array(val) {
     return [val >> 0, val >> 8, val >> 16, val >> 24].map(x => x & 0xFF);
