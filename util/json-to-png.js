@@ -50,13 +50,11 @@ function writePixels(start, buffArray, strObject) {
   const bytes = [...uint32ToUint8Array(strObject.length)];
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
-      if (x < h) {
-        if (bytes.length < 3) {
-          if (cur < strObject.length) {
-            bytes.push(...uint32ToUint8Array(strObject.charCodeAt(cur++)));
-          } else {
-            bytes.push(0, 0, 0, 0);
-          }
+      if (x < h && bytes.length < 3) {
+        if (cur < strObject.length) {
+          bytes.push(...uint32ToUint8Array(strObject.charCodeAt(cur++)));
+        } else {
+          bytes.push(0, 0, 0, 0);
         }
         buffArray.set(bytes.splice(0, 3), arrayIndex);
         arrayIndex += 3;
