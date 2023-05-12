@@ -48,20 +48,26 @@ function writePixels(start, buffArray, strObject) {
   const h = getHeightNeeded(strObject);
   let cur = 0;
   const bytes = [...uint32ToUint8Array(strObject.length)];
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      if (x < h && bytes.length < 3) {
-        if (cur < strObject.length) {
-          bytes.push(...uint32ToUint8Array(strObject.charCodeAt(cur++)));
-        } else {
-          bytes.push(0, 0, 0, 0);
-        }
-        buffArray.set(bytes.splice(0, 3), arrayIndex);
-        arrayIndex += 3;
-      } else {
-        buffArray.set([0, 0, 0], arrayIndex);
-        arrayIndex += 3;
+  let x = -1;
+  let y = 0;
+  for (let ind = 0; ind < h * w; ind++) {
+      if (++x >= w) {
+          x = 0;
+          y++;
       }
+      if (x < h) {
+        if (bytes.length < 3) {
+          if (cur < strObject.length) {
+            bytes.push(...uint32ToUint8Array(strObject.charCodeAt(cur++)));
+          } else {
+            bytes.push(0, 0, 0, 0);
+          }
+        }
+      buffArray.set(bytes.splice(0, 3), arrayIndex);
+      arrayIndex += 3;
+    } else {
+      buffArray.set([0, 0, 0], arrayIndex);
+      arrayIndex += 3;
     }
   }
 }
