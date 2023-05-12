@@ -18,4 +18,4 @@ class DupeChecker {
   }
 }
 
-module.exports = DupeChecker;
+export default DupeChecker;

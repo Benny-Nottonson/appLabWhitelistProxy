@@ -1,7 +1,7 @@
-const express = require('express');
-const bent = require('bent');
-const jsonToPng = require('../util/json-to-png');
-const DupeChecker = require('../util/dupe-checker');
+import express from 'express';
+import bent from 'bent';
+import convert from '../util/json-to-png.js';
+import DupeChecker from '../util/dupe-checker.js';
 
 const router = express.Router();
 const dupeChecker = new DupeChecker();
@@ -24,13 +24,13 @@ function badQuery(res) {
 
 router.get('/:method/:url/*.png', async (req, res) => {
   if (!dupeChecker.check(req)) return;
-  
+
   const { method, url } = req.params;
   const queryBody = req.query.body;
-  
+
   const validMethod = METHODS.find(m => m.type === method);
   if (!validMethod) return badQuery(res);
-  
+
   if (validMethod.body && !queryBody) return badQuery(res);
 
   const decodedUrl = decodeURIComponent(url);
@@ -40,7 +40,7 @@ router.get('/:method/:url/*.png', async (req, res) => {
     const request = bent(validMethod.type, 'json');
     const data = validMethod.body ? JSON.parse(decodeURIComponent(queryBody)) : undefined;
     const responseData = await request(decodedUrl, data);
-    const png = await jsonToPng.convert(responseData);
+    const png = await convert(responseData);
 
     res.type('png');
     res.send(png);
@@ -51,4 +51,4 @@ router.get('/:method/:url/*.png', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

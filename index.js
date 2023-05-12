@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-const routeHelloWorld = require('./routes/hello-world');
-const routeProxy = require('./routes/proxy');
+import routeHelloWorld from './routes/hello-world.js';
+import routeProxy from './routes/proxy.js';
 
 app.use('/hello-world', routeHelloWorld);
 app.use('/proxy', routeProxy);

@@ -1,6 +1,6 @@
-const express = require('express');
-const jsonToPng = require('../util/json-to-png');
-const DupeChecker = require('../util/dupe-checker');
+import express from 'express';
+import DupeChecker from '../util/dupe-checker.js';
+import convert from '../util/json-to-png.js';
 
 const router = express.Router();
 const dupeChecker = new DupeChecker();
@@ -9,7 +9,7 @@ router.get('/*.png', async (req, res) => {
   if (!dupeChecker.check(req)) return;
 
   try {
-    const png = await jsonToPng.convert({ message: 'Hello World' });
+    const png = await convert({ message: 'Hello World' });
     res.type('png').send(png);
     console.log('Hello World!');
   } catch (err) {
@@ -17,4 +17,4 @@ router.get('/*.png', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
