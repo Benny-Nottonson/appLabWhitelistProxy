@@ -64,13 +64,6 @@ function writePixels(start, buffArray, strObject) {
       }
     }
   }
-  if (bytes.length > 0) {
-    const len = 3 - bytes.length;
-    for (let i = 0; i < len; i++) {
-      bytes.push(0);
-    }
-    buffArray.set(bytes, arrayIndex);
-  }
 }
 
 function uint32ToUint8Array(val) {
