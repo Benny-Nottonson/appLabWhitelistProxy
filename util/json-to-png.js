@@ -1,15 +1,16 @@
 import jimp from 'jimp';
-export const BYTES_PER_CHAR = 4;
-export const HEADER_LENGTH = 14;
-export const INFO_LENGTH = 40;
-export const SIGNATURE = 'BM';
-export default function convert(obj) {
+const BYTES_PER_CHAR = 4;
+const HEADER_LENGTH = 14;
+const INFO_LENGTH = 40;
+const SIGNATURE = 'BM';
+export async function convert(obj) {
     const strObject = JSON.stringify(obj);
-    const buffArray = new Uint8Array(getBufferSize(strObject));
+    const bufferSize = getBufferSize(strObject);
+    const buffArray = new Uint8Array(bufferSize);
     let ind = writeHeaders(0, buffArray, strObject);
     writePixels(ind, buffArray, strObject);
-    return jimp.read(Buffer.from(buffArray.buffer))
-        .then((image) => image.getBufferAsync(jimp.MIME_PNG));
+    const image = await jimp.read(Buffer.from(buffArray.buffer));
+    return image.getBufferAsync(jimp.MIME_PNG);
 }
 function getHeightNeeded(str) {
     return Math.ceil(Math.sqrt(Math.ceil((str.length * BYTES_PER_CHAR + 4) / 3)));
@@ -63,8 +64,9 @@ function writePixels(start, buffArray, strObject) {
     }
 }
 function uint32ToUint8Array(val) {
-    return [val >> 0, val >> 8, val >> 16, val >> 24].map(x => x & 0xFF);
+    return [val >>> 0, val >>> 8, val >>> 16, val >>> 24];
 }
 function getBufferSize(str) {
     return HEADER_LENGTH + INFO_LENGTH + getWidthNeeded(str) * getHeightNeeded(str) * 3;
 }
+export default convert;
