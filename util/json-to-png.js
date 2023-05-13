@@ -3,12 +3,11 @@ export const BYTES_PER_CHAR = 4;
 export const HEADER_LENGTH = 14;
 export const INFO_LENGTH = 40;
 export const SIGNATURE = 'BM';
-export default async function convert(obj) {
+export default function convert(obj) {
     const strObject = JSON.stringify(obj);
-    const bufferSize = getBufferSize(strObject);
-    const buffArray = new Uint8Array(bufferSize);
+    const buffArray = new Uint8Array(getBufferSize(strObject));
     let ind = writeHeaders(0, buffArray, strObject);
-    await writePixelsAsync(ind, buffArray, strObject);
+    writePixels(ind, buffArray, strObject);
     return jimp.read(Buffer.from(buffArray.buffer))
         .then((image) => image.getBufferAsync(jimp.MIME_PNG));
 }
@@ -36,34 +35,26 @@ function writeHeaders(start, buffArray, strObject) {
     buffArray.set(uint8Array, start);
     return start + uint8Array.length + 12;
 }
-async function writePixelsAsync(start, buffArray, strObject) {
+function writePixels(start, buffArray, strObject) {
     const w = getWidthNeeded(strObject);
     const h = getHeightNeeded(strObject);
-    const bytes = new Uint8Array(4);
+    const bytes = [...uint32ToUint8Array(strObject.length)];
     let x = -1, cur = 0, arrayIndex = start;
     for (let ind = 0; ind < h * w; ind++) {
         if (++x >= w) {
             x = 0;
         }
         if (x < h) {
-            if (bytes[3] === 0) {
+            if (bytes.length < 3) {
                 if (cur < strObject.length) {
-                    const charCode = strObject.charCodeAt(cur++);
-                    bytes[0] = charCode & 0xFF;
-                    bytes[1] = (charCode >> 8) & 0xFF;
-                    bytes[2] = (charCode >> 16) & 0xFF;
-                    bytes[3] = (charCode >> 24) & 0xFF;
+                    bytes.push(...uint32ToUint8Array(strObject.charCodeAt(cur++)));
                 }
                 else {
-                    bytes[0] = 0;
-                    bytes[1] = 0;
-                    bytes[2] = 0;
-                    bytes[3] = 0;
+                    bytes.push(0, 0, 0, 0);
                 }
             }
-            buffArray.set(bytes.subarray(0, 3), arrayIndex);
+            buffArray.set(bytes.splice(0, 3), arrayIndex);
             arrayIndex += 3;
-            bytes[3]--;
         }
         else {
             buffArray.set([0, 0, 0], arrayIndex);
