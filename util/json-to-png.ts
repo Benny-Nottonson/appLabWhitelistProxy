@@ -30,19 +30,15 @@ function getWidthNeeded(str: string): number {
 
 function writeHeaders(start: number, buffArray: Uint8Array, strObject: string): number {
   const widthNeeded = getWidthNeeded(strObject);
-  const uint8Array = new Uint8Array([
-    ...SIGNATURE.split("").map(ch => ch.charCodeAt(0)),
-    ...uint32ToUint8Array(getBufferSize(strObject)),
-    0, 0, 0, 0,
-    ...uint32ToUint8Array(HEADER_LENGTH + INFO_LENGTH),
-    ...uint32ToUint8Array(INFO_LENGTH),
-    ...uint32ToUint8Array(widthNeeded),
-    ...uint32ToUint8Array(-getHeightNeeded(strObject)),
-    1, 0, 24, 0,
-    0, 0, 0, 0,
-    0xff, 0xff, 0xff, 0xff,
-    0, 0, 0, 0
-  ]);
+  const uint8Array = new Uint8Array(HEADER_LENGTH + INFO_LENGTH);
+  uint8Array.set(SIGNATURE.split("").map(ch => ch.charCodeAt(0)), 0);
+  uint8Array.set(uint32ToUint8Array(getBufferSize(strObject)), 2);
+  uint8Array.set(uint32ToUint8Array(HEADER_LENGTH + INFO_LENGTH), 10);
+  uint8Array.set(uint32ToUint8Array(INFO_LENGTH), 14);
+  uint8Array.set(uint32ToUint8Array(widthNeeded), 18);
+  uint8Array.set(uint32ToUint8Array(-getHeightNeeded(strObject)), 22);
+  uint8Array.set([1, 0, 24, 0], 26);
+  uint8Array.set([0xff, 0xff, 0xff, 0xff], 46);
   buffArray.set(uint8Array, start);
   return start + uint8Array.length + 12;
 }
@@ -50,26 +46,30 @@ function writeHeaders(start: number, buffArray: Uint8Array, strObject: string): 
 function writePixels(start: number, buffArray: Uint8Array, strObject: string): void {
   const w = getWidthNeeded(strObject);
   const h = getHeightNeeded(strObject);
-  const bytes = [...uint32ToUint8Array(strObject.length)];
+  const bytes = new Array<number>(4);
+  bytes[3] = 0;
   let x = -1, cur = 0, arrayIndex = start;
   for (let ind = 0; ind < h * w; ind++) {
     if (++x >= w) {
         x = 0;
     }
     if (x < h) {
-      if (bytes.length < 3) {
+      if (bytes[3] === 0) {
         if (cur < strObject.length) {
-          bytes.push(...uint32ToUint8Array(strObject.charCodeAt(cur++)));
+          const charCode = strObject.charCodeAt(cur++);
+          bytes[0] = charCode & 0xff;
+          bytes[1] = (charCode >> 8) & 0xff;
+          bytes[2] = (charCode >> 16) & 0xff;
         } else {
-          bytes.push(0, 0, 0, 0);
+          bytes[0] = bytes[1] = bytes[2] = 0;
         }
+        bytes[3] = 1;
       }
-    buffArray.set(bytes.splice(0, 3), arrayIndex);
-    arrayIndex += 3;
+      buffArray[arrayIndex] = bytes.shift()!;
     } else {
-      buffArray.set([0, 0, 0], arrayIndex);
-      arrayIndex += 3;
+      buffArray[arrayIndex] = 0;
     }
+    arrayIndex++;
   }
 }
 

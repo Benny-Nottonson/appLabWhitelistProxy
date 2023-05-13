@@ -1,7 +1,7 @@
 import { Request } from 'express';
 
 class DupeChecker {
-  private readonly duplicates = new Set<string>();
+  private readonly duplicates: { [key: string]: number } = {};
   private readonly timeout: number;
 
   constructor(timeout = 10000) {
@@ -10,15 +10,13 @@ class DupeChecker {
 
   check(req: Request): boolean {
     const key = req.path;
-    if (this.duplicates.has(key)) {
+    const now = Date.now();
+
+    if (this.duplicates[key] !== undefined && this.duplicates[key] + this.timeout > now) {
       return false;
     }
 
-    this.duplicates.add(key);
-    setTimeout(() => {
-      this.duplicates.delete(key);
-    }, this.timeout);
-
+    this.duplicates[key] = now;
     return true;
   }
 }

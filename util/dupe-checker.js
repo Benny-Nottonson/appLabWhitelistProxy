@@ -1,18 +1,16 @@
 class DupeChecker {
-    duplicates = new Set();
+    duplicates = {};
     timeout;
     constructor(timeout = 10000) {
         this.timeout = timeout;
     }
     check(req) {
         const key = req.path;
-        if (this.duplicates.has(key)) {
+        const now = Date.now();
+        if (this.duplicates[key] !== undefined && this.duplicates[key] + this.timeout > now) {
             return false;
         }
-        this.duplicates.add(key);
-        setTimeout(() => {
-            this.duplicates.delete(key);
-        }, this.timeout);
+        this.duplicates[key] = now;
         return true;
     }
 }

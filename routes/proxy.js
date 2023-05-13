@@ -4,17 +4,8 @@ import convert from '../util/json-to-png.js';
 import DupeChecker from '../util/dupe-checker.js';
 const router = express.Router();
 const dupeChecker = new DupeChecker();
-const METHODS = [
-    { type: 'GET', body: false },
-    { type: 'HEAD', body: false },
-    { type: 'POST', body: true },
-    { type: 'PUT', body: true },
-    { type: 'DELETE', body: true },
-    { type: 'CONNECT', body: false },
-    { type: 'OPTIONS', body: false },
-    { type: 'TRACE', body: false },
-    { type: 'PATCH', body: true },
-];
+const METHODS = new Set(['GET', 'HEAD', 'CONNECT', 'OPTIONS', 'TRACE']);
+const METHODS_WITH_BODY = new Set(['POST', 'PUT', 'DELETE', 'PATCH']);
 function badQuery(res) {
     res.send({ error: true, message: 'Bad query' });
 }
@@ -23,16 +14,15 @@ router.get('/:method/:url/*.png', async (req, res) => {
         return;
     const { method, url } = req.params;
     const queryBody = req.query.body;
-    const validMethod = METHODS.find(m => m.type === method);
-    if (!validMethod)
+    if (!METHODS.has(method))
         return badQuery(res);
-    if (validMethod.body && !queryBody)
+    if (METHODS_WITH_BODY.has(method) && !queryBody)
         return badQuery(res);
     const decodedUrl = decodeURIComponent(url);
     console.log(`Proxy route accessed: ${method}: ${decodedUrl}`);
     try {
-        const request = bent(validMethod.type, 'json');
-        const data = validMethod.body && typeof queryBody === 'string' ? JSON.parse(decodeURIComponent(queryBody)) : undefined;
+        const request = bent(method, 'json');
+        const data = METHODS_WITH_BODY.has(method) && typeof queryBody === 'string' ? JSON.parse(decodeURIComponent(queryBody)) : undefined;
         const responseData = await request(decodedUrl, data);
         const png = await convert(responseData);
         res.type('png').send(png);
