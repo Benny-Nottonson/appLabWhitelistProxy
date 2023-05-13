@@ -7,11 +7,11 @@ const router = express.Router();
 const dupeChecker = new DupeChecker();
 
 interface Method {
-  type: string;
-  body: boolean;
+  readonly type: string;
+  readonly body: boolean;
 }
 
-const METHODS: Method[] = [
+const METHODS: readonly Method[] = [
   { type: 'GET', body: false },
   { type: 'HEAD', body: false },
   { type: 'POST', body: true },

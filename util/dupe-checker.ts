@@ -1,11 +1,10 @@
 import { Request } from 'express';
 
 class DupeChecker {
-  private duplicates: Set<string>;
-  private timeout: number;
+  private readonly duplicates = new Set<string>();
+  private readonly timeout: number;
 
-  constructor(timeout: number = 10000) {
-    this.duplicates = new Set();
+  constructor(timeout = 10000) {
     this.timeout = timeout;
   }
 

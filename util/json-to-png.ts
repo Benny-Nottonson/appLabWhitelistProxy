@@ -1,9 +1,9 @@
 import jimp from 'jimp';
 
-const BYTES_PER_CHAR = 4;
-const HEADER_LENGTH = 14;
-const INFO_LENGTH = 40;
-const SIGNATURE = 'BM';
+const BYTES_PER_CHAR = 4 as const;
+const HEADER_LENGTH = 14 as const;
+const INFO_LENGTH = 40 as const;
+const SIGNATURE = 'BM' as const;
 
 export interface ConvertOptions {
   [key: string]: unknown;
@@ -73,8 +73,8 @@ function writePixels(start: number, buffArray: Uint8Array, strObject: string): v
   }
 }
 
-function uint32ToUint8Array(val: number): number[] {
-  return [val >>> 0, val >>> 8, val >>> 16, val >>> 24];
+function uint32ToUint8Array(val: number): readonly [number, number, number, number] {
+  return [val >>> 0, val >>> 8, val >>> 16, val >>> 24] as const;
 }
 
 function getBufferSize(str: string): number {

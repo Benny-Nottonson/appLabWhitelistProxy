@@ -1,8 +1,7 @@
 class DupeChecker {
-    duplicates;
+    duplicates = new Set();
     timeout;
     constructor(timeout = 10000) {
-        this.duplicates = new Set();
         this.timeout = timeout;
     }
     check(req) {
