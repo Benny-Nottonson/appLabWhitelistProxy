@@ -1,6 +1,6 @@
-import express from "express";
+import express from 'express';
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = parseInt(process.env.PORT || '8000', 10);
 import routeHelloWorld from './routes/hello-world.js';
 import routeProxy from './routes/proxy.js';
 app.use('/hello-world', routeHelloWorld);

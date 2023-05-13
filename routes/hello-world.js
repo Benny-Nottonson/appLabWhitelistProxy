@@ -12,7 +12,12 @@ router.get('/*.png', async (req, res) => {
         console.log('Hello World!');
     }
     catch (err) {
-        res.status(400).send(err.message);
+        if (err instanceof Error) {
+            res.status(400).send(err.message);
+        }
+        else {
+            res.status(400).send('An unknown error occurred');
+        }
     }
 });
 export default router;

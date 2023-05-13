@@ -32,11 +32,10 @@ router.get('/:method/:url/*.png', async (req, res) => {
     console.log(`Proxy route accessed: ${method}: ${decodedUrl}`);
     try {
         const request = bent(validMethod.type, 'json');
-        const data = validMethod.body ? (typeof queryBody === 'string' ? JSON.parse(decodeURIComponent(queryBody)) : undefined) : undefined;
+        const data = validMethod.body && typeof queryBody === 'string' ? JSON.parse(decodeURIComponent(queryBody)) : undefined;
         const responseData = await request(decodedUrl, data);
         const png = await convert(responseData);
-        res.type('png');
-        res.send(png);
+        res.type('png').send(png);
         console.log('Hello Proxy!');
     }
     catch (error) {

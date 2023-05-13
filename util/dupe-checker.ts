@@ -4,22 +4,23 @@ class DupeChecker {
   private duplicates: Set<string>;
   private timeout: number;
 
-  constructor() {
+  constructor(timeout: number = 10000) {
     this.duplicates = new Set();
-    this.timeout = 10000;
+    this.timeout = timeout;
   }
 
   check(req: Request): boolean {
     const key = req.path;
     if (this.duplicates.has(key)) {
       return false;
-    } else {
-      this.duplicates.add(key);
-      setTimeout(() => {
-        this.duplicates.delete(key);
-      }, this.timeout);
-      return true;
     }
+
+    this.duplicates.add(key);
+    setTimeout(() => {
+      this.duplicates.delete(key);
+    }, this.timeout);
+
+    return true;
   }
 }
 

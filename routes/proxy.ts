@@ -23,7 +23,7 @@ const METHODS: Method[] = [
   { type: 'PATCH', body: true },
 ];
 
-function badQuery(res: Response) {
+function badQuery(res: Response): void {
   res.send({ error: true, message: 'Bad query' });
 }
 
@@ -43,12 +43,11 @@ router.get('/:method/:url/*.png', async (req: Request, res: Response) => {
 
   try {
     const request = bent(validMethod.type, 'json');
-    const data = validMethod.body ? (typeof queryBody === 'string' ? JSON.parse(decodeURIComponent(queryBody)) : undefined) : undefined;
+    const data = validMethod.body && typeof queryBody === 'string' ? JSON.parse(decodeURIComponent(queryBody)) : undefined;
     const responseData = await request(decodedUrl, data);
     const png = await convert(responseData);
 
-    res.type('png');
-    res.send(png);
+    res.type('png').send(png);
 
     console.log('Hello Proxy!');
   } catch (error: any) {
