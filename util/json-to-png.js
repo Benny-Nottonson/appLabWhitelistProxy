@@ -13,7 +13,7 @@ export async function convert(obj) {
     return image.getBufferAsync(jimp.MIME_PNG);
 }
 function getHeightNeeded(str) {
-    return Math.min(Math.ceil(Math.sqrt(Math.ceil((str.length * BYTES_PER_CHAR + 4) / 3))), 64);
+    return Math.ceil(Math.sqrt(Math.ceil((str.length * BYTES_PER_CHAR + 4) / 3)));
 }
 function getWidthNeeded(str) {
     return Math.ceil(getHeightNeeded(str) / 4) * 4;

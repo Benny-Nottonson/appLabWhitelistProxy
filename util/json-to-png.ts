@@ -21,7 +21,7 @@ export async function convert(obj: ConvertOptions): Promise<Buffer> {
 }
 
 function getHeightNeeded(str: string): number {
-  return Math.min(Math.ceil(Math.sqrt(Math.ceil((str.length * BYTES_PER_CHAR + 4) / 3))), 64);
+  return Math.ceil(Math.sqrt(Math.ceil((str.length * BYTES_PER_CHAR + 4) / 3)));
 }
 
 function getWidthNeeded(str: string): number {
