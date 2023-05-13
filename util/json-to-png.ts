@@ -45,24 +45,22 @@ function writeHeaders(start: number, buffArray: Uint8Array, strObject: string): 
 function writePixels(start: number, buffArray: Uint8Array, strObject: string): void {
   const w = getWidthNeeded(strObject);
   const h = getHeightNeeded(strObject);
-  const bytes = new Uint8Array(3);
-  const charCodes = strObject.split('').map(char => char.charCodeAt(0));
+  const bytes = [...uint32ToUint8Array(strObject.length)];
   let x = -1, cur = 0, arrayIndex = start;
   for (let ind = 0; ind < h * w; ind++) {
     if (++x >= w) {
-      x = 0;
+        x = 0;
     }
     if (x < h) {
-      if (cur < charCodes.length) {
-        const charCode = charCodes[cur++];
-        bytes[0] = (charCode >> 16) & 0xFF;
-        bytes[1] = (charCode >> 8) & 0xFF;
-        bytes[2] = charCode & 0xFF;
-      } else {
-        bytes.fill(0);
+      if (bytes.length < 3) {
+        if (cur < strObject.length) {
+          bytes.push(...uint32ToUint8Array(strObject.charCodeAt(cur++)));
+        } else {
+          bytes.push(0, 0, 0, 0);
+        }
       }
-      buffArray.set(bytes, arrayIndex);
-      arrayIndex += 3;
+    buffArray.set(bytes.splice(0, 3), arrayIndex);
+    arrayIndex += 3;
     } else {
       buffArray.set([0, 0, 0], arrayIndex);
       arrayIndex += 3;
