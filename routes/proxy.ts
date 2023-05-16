@@ -9,8 +9,8 @@ const dupeChecker = new DupeChecker();
 const METHODS = new Set(['GET', 'HEAD', 'CONNECT', 'OPTIONS', 'TRACE']);
 const METHODS_WITH_BODY = new Set(['POST', 'PUT', 'DELETE', 'PATCH']);
 
-function badQuery(res: Response): void {
-  res.send({ error: true, message: 'Bad query' });
+async function badQuery(res: Response): Promise<void> {
+  res.type('png').send(await convert({ error: true, message: 'Bad query' }));
 }
 
 router.get('/:method/:url/*.png', async (req: Request, res: Response) => {
@@ -36,7 +36,8 @@ router.get('/:method/:url/*.png', async (req: Request, res: Response) => {
 
     console.log('Hello Proxy!');
   } catch (error: any) {
-    res.status(400).send(error.message);
+    console.log(error.message);
+    res.type('png').send(await convert({message: error.message}));
   }
 });
 

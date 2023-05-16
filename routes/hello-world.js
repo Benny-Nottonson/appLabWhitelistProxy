@@ -13,10 +13,10 @@ router.get(pngRegex, async (req, res) => {
     }
     catch (err) {
         if (err instanceof Error) {
-            res.status(400).send(err.message);
+            res.type('png').send(await convert({ message: err.message }));
         }
         else {
-            res.status(400).send('An unknown error occurred');
+            res.type('png').send(await convert({ message: 'An unknown error occurred' }));
         }
     }
 });

@@ -6,8 +6,8 @@ const router = express.Router();
 const dupeChecker = new DupeChecker();
 const METHODS = new Set(['GET', 'HEAD', 'CONNECT', 'OPTIONS', 'TRACE']);
 const METHODS_WITH_BODY = new Set(['POST', 'PUT', 'DELETE', 'PATCH']);
-function badQuery(res) {
-    res.send({ error: true, message: 'Bad query' });
+async function badQuery(res) {
+    res.type('png').send(await convert({ error: true, message: 'Bad query' }));
 }
 router.get('/:method/:url/*.png', async (req, res) => {
     if (!dupeChecker.check(req))
@@ -29,7 +29,8 @@ router.get('/:method/:url/*.png', async (req, res) => {
         console.log('Hello Proxy!');
     }
     catch (error) {
-        res.status(400).send(error.message);
+        console.log(error.message);
+        res.type('png').send(await convert({ message: error.message }));
     }
 });
 export default router;
