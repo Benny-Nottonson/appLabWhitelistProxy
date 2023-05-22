@@ -2,7 +2,7 @@ import Jimp from 'jimp';
 export async function convert(obj) {
     const strObject = JSON.stringify(obj);
     const size = calculateSize(strObject);
-    const image = new Jimp(size, size + 1, 'white', (err) => {
+    const image = new Jimp(size, size + 1, 'black', (err) => {
         if (err)
             throw err;
     });
@@ -17,7 +17,7 @@ function writePixels(image, str) {
     const length = charArray.length.toString().split('');
     let y = 0;
     for (let i = 0; i < length.length; i += 3) {
-        const charCode = length[i].charCodeAt(0);
+        const charCode = length[i] ? length[i].charCodeAt(0) : 0;
         const charCodeTwo = length[i + 1] ? length[i + 1].charCodeAt(0) : 0;
         const charCodeThree = length[i + 2] ? length[i + 2].charCodeAt(0) : 0;
         image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 1), y, 0);
@@ -26,7 +26,7 @@ function writePixels(image, str) {
     const size = calculateSize(str);
     let x = 0;
     for (let i = 0; i < charArray.length; i += 3) {
-        const charCode = length[i].charCodeAt(0);
+        const charCode = length[i] ? length[i].charCodeAt(0) : 0;
         const charCodeTwo = length[i + 1] ? length[i + 1].charCodeAt(0) : 0;
         const charCodeThree = length[i + 2] ? length[i + 2].charCodeAt(0) : 0;
         image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 1), x, y);
