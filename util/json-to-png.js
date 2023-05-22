@@ -20,7 +20,7 @@ function writePixels(image, str) {
         const charCode = length[i] ? length[i].charCodeAt(0) : 0;
         const charCodeTwo = length[i + 1] ? length[i + 1].charCodeAt(0) : 0;
         const charCodeThree = length[i + 2] ? length[i + 2].charCodeAt(0) : 0;
-        image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 1), y, 0);
+        image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 255), y, 0);
     }
     y++;
     const size = calculateSize(str);
@@ -29,7 +29,7 @@ function writePixels(image, str) {
         const charCode = length[i] ? length[i].charCodeAt(0) : 0;
         const charCodeTwo = length[i + 1] ? length[i + 1].charCodeAt(0) : 0;
         const charCodeThree = length[i + 2] ? length[i + 2].charCodeAt(0) : 0;
-        image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 1), x, y);
+        image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 255), x, y);
         x++;
         if (x >= size) {
             x = 0;
