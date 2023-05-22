@@ -36,9 +36,9 @@ function writePixels(image: Jimp, str: string): any {
     const size = calculateSize(str);
     let x:number = 0;
     for (let i:number = 0; i < charArray.length; i += 3) {
-      const charCode:number = length[i] ? length[i].charCodeAt(0) : 255;
-      const charCodeTwo:number = length[i + 1] ? length[i + 1].charCodeAt(0) : 255;
-      const charCodeThree:number = length[i + 2] ? length[i + 2].charCodeAt(0) : 255;
+      const charCode:number = charArray[i] ? charArray[i].charCodeAt(0) : 255;
+      const charCodeTwo:number = charArray[i + 1] ? charArray[i + 1].charCodeAt(0) : 255;
+      const charCodeThree:number = charArray[i + 2] ? charArray[i + 2].charCodeAt(0) : 255;
       image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 255), x, y);
         x++;
         if (x >= size) {
