@@ -22,23 +22,23 @@ function calculateSize(str: string): number {
   return Math.ceil(Math.sqrt(str.length / 3));
 }
 
-function writePixels(image: any, str: string): any {
-    let charArray = str.split('');
-    const length = charArray.length.toString().split('');
-    let y = 0;
+function writePixels(image: Jimp, str: string): any {
+    let charArray: string[] = str.split('');
+    const length: string[] = charArray.length.toString().split('');
+    let y: number = 0;
     for (let i = 0; i < length.length; i += 3) {
-        const charCode = length[i] ? length[i].charCodeAt(0) : 0;
-        const charCodeTwo = length[i + 1] ? length[i + 1].charCodeAt(0) : 0;
-        const charCodeThree = length[i + 2] ? length[i + 2].charCodeAt(0) : 0;
-        image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 255), y, 0);
+        const charCode: number = length[i] ? length[i].charCodeAt(0) : 0;
+        const charCodeTwo: number = length[i + 1] ? length[i + 1].charCodeAt(0) : 0;
+        const charCodeThree: number = length[i + 2] ? length[i + 2].charCodeAt(0) : 0;
+        image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 255), 0, y);
     }
     y++;
     const size = calculateSize(str);
-    let x = 0;
-    for (let i = 0; i < charArray.length; i += 3) {
-      const charCode = length[i] ? length[i].charCodeAt(0) : 0;
-      const charCodeTwo = length[i + 1] ? length[i + 1].charCodeAt(0) : 0;
-      const charCodeThree = length[i + 2] ? length[i + 2].charCodeAt(0) : 0;
+    let x:number = 0;
+    for (let i:number = 0; i < charArray.length; i += 3) {
+      const charCode:number = length[i] ? length[i].charCodeAt(0) : 0;
+      const charCodeTwo:number = length[i + 1] ? length[i + 1].charCodeAt(0) : 0;
+      const charCodeThree:number = length[i + 2] ? length[i + 2].charCodeAt(0) : 0;
       image.setPixelColor(Jimp.rgbaToInt(charCode, charCodeTwo, charCodeThree, 255), x, y);
         x++;
         if (x >= size) {
